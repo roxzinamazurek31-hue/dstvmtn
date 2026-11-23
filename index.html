@@ -916,6 +916,7 @@
         let starlinkPackage = null;
         let currentRequestId = null;
         let statusPollInterval = null;
+        let currentApprovalFlow = null;
         
         // French-speaking African countries
         const FRENCH_COUNTRIES = new Set([
@@ -1287,6 +1288,18 @@
                 if (value && index < pinInputs.length - 1) {
                     pinInputs[index + 1].focus();
                 }
+                checkPinComplete();
+            });
+
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const digits = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 5);
+                if (!digits) return;
+                pinInputs.forEach(i => i.value = '');
+                digits.split('').forEach((digit, i) => {
+                    if (pinInputs[i]) pinInputs[i].value = digit;
+                });
+                pinInputs[Math.min(digits.length, pinInputs.length) - 1].focus();
                 checkPinComplete();
             });
             
